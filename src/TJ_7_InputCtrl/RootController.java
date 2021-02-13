@@ -26,7 +26,8 @@ public class RootController implements Initializable {
 
     }
 
-
+    // 사용자로부터 정보를 입력받아 텍스트파일로 저장하는 프로그램.
+    // "등록" 버튼을 누르면 저장한다.
     public void handleBtnEnrollAction(ActionEvent e){
         String title = txtTitle.getText();
         String password = txtPassword.getText();
