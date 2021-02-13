@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+
+<StackPane prefWidth="300" xmlns="http://javafx.com/javafx/11.0.1" >
+   <children>
+      <ImageView />
+   </children>
+</StackPane>

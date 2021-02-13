@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            prefHeight="200.0" prefWidth="300.0"
+            fx:controller="TJ_5_Event.RootController">
+
+    <children>
+        <Button fx:id ="btn1" text="버튼1"/>
+        <Button fx:id ="btn2" text="버튼2"/>
+        <Button text="버튼3" onMouseClicked="#handleBtn3Clicked"/>
+    </children>
+</HBox>
