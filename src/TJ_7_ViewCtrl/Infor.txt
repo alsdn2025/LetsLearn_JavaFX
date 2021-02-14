@@ -1,0 +1,15 @@
+select KeyBoard i wantobuy Program 
+learning View Ctrl - tableView, listView, ImageView
+IT's quite funny
+
+select Product and Print to console
+and make txt File 
+Content like
+
+Selected product index : 1
+Manufacturer Name : Hansung
+Product Name : GK888b
+Save DateTime : 2021-02-14 Sun PM 08:50 +09
+
+
+
