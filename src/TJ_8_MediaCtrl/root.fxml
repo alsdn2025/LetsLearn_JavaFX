@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.media.*?>
+
+<AnchorPane prefHeight="263.0" prefWidth="335.0" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="TJ_8_MediaCtrl.RootController">
+   <StackPane layoutX="33.0" layoutY="14.0" prefHeight="170.0" prefWidth="270.0">
+      <ImageView fitHeight="170.0" fitWidth="270.0" pickOnBounds="true">
+         <Image url="@Medias/Image.jpg"/>
+      </ImageView>
+      <MediaView fx:id="mediaView" fitHeight="170.0" fitWidth="270.0" preserveRatio="false"/>
+   </StackPane>
+
+   <Button fx:id="btnPlay" layoutX="52.0" layoutY="202.0" maxHeight="35.0" maxWidth="50.0" minHeight="35.0"
+           minWidth="50.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="50.0">
+      <graphic>
+         <ImageView fitHeight="50.0" fitWidth="50.0" nodeOrientation="INHERIT" pickOnBounds="true">
+            <Image url="@Medias/BtnImages/PlayImage.jpg"/>
+         </ImageView>
+      </graphic>
+   </Button>
+
+   <Button fx:id="btnPause" layoutX="118.0" layoutY="202.0" maxHeight="35.0" maxWidth="50.0" minHeight="35.0"
+           minWidth="50.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="50.0">
+      <graphic>
+         <ImageView fitHeight="50.0" fitWidth="50.0" nodeOrientation="INHERIT" pickOnBounds="true">
+            <Image url="@Medias/BtnImages/PauseImage.jpg"/>
+         </ImageView>
+      </graphic>
+   </Button>
+
+   <Button fx:id="btnStop" layoutX="186.0" layoutY="202.0" maxHeight="35.0" maxWidth="50.0" minHeight="35.0"
+           minWidth="50.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="50.0">
+      <graphic>
+         <ImageView fitHeight="50.0" fitWidth="50.0" nodeOrientation="INHERIT" pickOnBounds="true">
+            <Image url="@Medias/BtnImages/StopImage.jpg"/>
+         </ImageView>
+      </graphic>
+   </Button>
+   <Button fx:id="btnChangeMedia" layoutX="253.0" layoutY="208.0" mnemonicParsing="false" prefHeight="24.0"
+           prefWidth="50.0" text="music"/>
+
+</AnchorPane>
