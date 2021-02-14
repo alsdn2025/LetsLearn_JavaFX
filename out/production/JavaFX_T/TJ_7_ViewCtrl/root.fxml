@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="194.0" prefWidth="512.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="TJ_7_ViewCtrl.RootController">
+
+   <ListView fx:id="listView" layoutX="7.0" layoutY="32.0" prefHeight="123.0" prefWidth="68.0" />
+
+
+   <TableView fx:id="tableView" layoutX="81.0" layoutY="32.0" prefHeight="106.0" prefWidth="266.0">
+     <columns>
+       <TableColumn editable="false" prefWidth="173.0" text="name" />
+       <TableColumn editable="false" prefWidth="92.0" text="image" />
+     </columns>
+   </TableView>
+
+   <Label layoutX="18.0" layoutY="14.0" text="Manufacturer" />
+   <Label layoutX="166.0" layoutY="14.0" text="Product" />
+   <Label layoutX="397.0" layoutY="14.0" text="Image" />
+
+   <ImageView fx:id="imageView" fitHeight="123.0" fitWidth="144.0" layoutX="354.0" layoutY="32.0" pickOnBounds="true" preserveRatio="true" />
+
+   <Button layoutX="357.0" layoutY="158.0" mnemonicParsing="false" text="확인"
+        onAction="#handleBtnOkAction"/>
+   <Button layoutX="443.0" layoutY="158.0" mnemonicParsing="false" text="취소"
+        onAction="#handleBtnCancelAction"/>
+
+</AnchorPane>
