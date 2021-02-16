@@ -18,8 +18,6 @@ public class AppMain_ViewCtrl extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("root.fxml"));
         Scene scene = new Scene(root);
 
-
-
         primaryStage.setScene(scene);
         primaryStage.setTitle("AppMain");
         primaryStage.show();

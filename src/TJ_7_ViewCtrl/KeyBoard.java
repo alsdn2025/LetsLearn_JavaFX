@@ -15,10 +15,6 @@ public class KeyBoard {
         return name.get();
     }
 
-    public SimpleStringProperty nameProperty() {
-        return name;
-    }
-
     public String getImage() {
         return image.get();
     }
