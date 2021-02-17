@@ -13,7 +13,7 @@ import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 
 
-public class AppMain_Media extends Application {
+public class AppMain_Chart extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("root.fxml"));
