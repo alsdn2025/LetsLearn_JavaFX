@@ -167,7 +167,6 @@ public class RootController implements Initializable {
                 }
             });
 
-
             sliderTime.valueProperty().addListener((observableValue, oldValue, newValue) -> {
                 if (sliderTime.isPressed()) {
                     double TimeRate = newValue.doubleValue() / 100.0;
