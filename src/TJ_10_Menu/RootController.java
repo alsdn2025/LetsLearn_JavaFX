@@ -24,7 +24,6 @@ import java.util.ResourceBundle;
 
 public class RootController implements Initializable {
     @FXML private TextArea textArea;
-    @FXML private Button btnQuestion;
     private Stage primaryStage;
 
     @Override
@@ -114,17 +113,23 @@ public class RootController implements Initializable {
         customDialog.initOwner(primaryStage);
         customDialog.setTitle("Question?");
 
-        Parent parent = FXMLLoader.load(getClass().getResource("Question.fxml"));
-        Label lblQuestionText = (Label) parent.lookup("#lblQuestionText");
-        lblQuestionText.setText("Sorry." + System.lineSeparator() + "You Can't Question Now");
-        Button btnQuestionOk = (Button) parent.lookup("#btnQuestionOk");
-        btnQuestionOk.setOnAction(event -> customDialog.close());
+/*
+         다른 루트컨테이너의 컨트롤은, 해당 루트컨테이너의 컨트롤러에게 맡겨라.
+*/
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Question.fxml"));
+        Parent parent = loader.load();
+        QuestionController questionController = loader.getController();
+        questionController.setDialog(customDialog);
+
+//        Label lblQuestionText = (Label) parent.lookup("#lblQuestionText");
+//        lblQuestionText.setText("Sorry." + System.lineSeparator() + "You Can't Question Now");
+//        Button btnQuestionOk = (Button) parent.lookup("#btnQuestionOk");
+//        btnQuestionOk.setOnAction(event -> customDialog.close());
 
         Scene scene = new Scene(parent);
         customDialog.setScene(scene);
         customDialog.setResizable(false);
         customDialog.show();
-
     }
 
 }
