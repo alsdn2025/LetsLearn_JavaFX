@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<VBox prefHeight="400.0" prefWidth="600.0" spacing="15" stylesheets="@app.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets topRightBottomLeft="10" />
+    </padding>
+
+    <HBox alignment="CENTER" spacing="10">
+        <Label style="-fx-background-color: black;                                 -fx-text-fill: yellow; -fx-padding: 5;" text="검정바탕, 노란글씨" />
+
+        <Label style="-fx-background-color: blue;                                 -fx-text-fill: white; -fx-padding: 5;" text="파란바탕, 흰글씨" />
+        <Label style="-fx-background-color: white;                                 -fx-text-fill: black; -fx-padding: 5;" text="하얀바탕, 검정글씨" />
+    </HBox>
+
+    <HBox alignment="CENTER" spacing="30">
+        <Label id="lblid" style="-fx-background-color: purple" text="lblid label" />
+        <Label styleClass="lblClass" text="lblClass label" />
+    </HBox>
+
+    <HBox alignment="CENTER" spacing="30">
+        <TextField />
+        <Button text="button" />
+    </HBox>
+    <HBox alignment="CENTER" spacing="30">
+        <Pane prefHeight="50" prefWidth="50" />
+        <Pane prefHeight="50" prefWidth="50" />
+        <Pane prefHeight="50" prefWidth="50" />
+        <Circle id="circle" radius="44.0" />
+      <Button id="btnShadow" mnemonicParsing="true" prefHeight="42.0" prefWidth="84.0" text="_Shadow" />
+    </HBox>
+
+    <HBox alignment="CENTER" spacing="30">
+        <Pane prefHeight="100" prefWidth="100" styleClass="imagePane" />
+        <Pane id="RepeatImage" prefHeight="100" prefWidth="100" styleClass="imagePane" />
+        <Pane prefHeight="100" prefWidth="100" styleClass="imagePane" />
+        <Pane prefHeight="100" prefWidth="100" styleClass="imagePane" />
+    </HBox>
+    <TextArea id="txtArea1" text="Testing Font" />
+    <TextArea id="txtArea2" text="Testing Font2" />
+</VBox>

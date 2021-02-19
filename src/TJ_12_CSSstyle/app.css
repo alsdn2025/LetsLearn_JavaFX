@@ -1,0 +1,90 @@
+/*전체  label을 선택*/
+Label{
+    -fx-padding: 5;
+}
+
+/*id="lblid"를 가진 컨트롤만 선택*/
+#lblid{
+    -fx-background-color: black;
+    -fx-text-fill: yellow;
+}
+
+/*styleClass = "lblClass"인 컨트롤만 선택 */
+.lblClass{
+    -fx-background-color: green;
+    -fx-text-fill: black;
+    -fx-padding: 0;
+}
+
+TextField{
+    -fx-background-color: black;
+    -fx-border-color: black;
+}
+TextField:focused{
+    -fx-background-color: yellow;
+    -fx-border-radius : 30;
+    -fx-border-insets: 5,10,15;
+    -fx-border-color: red, green purple white black , blue;
+    -fx-border-width: 3,  0.5  1.0  1.5  2.0  ,1;
+    -fx-border-style: solid dotted dashed;
+}
+Button:hover{
+    -fx-background-color: yellow;
+    -fx-border-color: skyblue;
+}
+Button:pressed{
+    -fx-background-color: red;
+}
+
+Pane{
+    -fx-background-color: radial-gradient(
+            center 50% 20%, radius 50%, darkred 20%, darkslategray 80%);
+    -fx-background-position: bottom;
+}
+Pane:hover{
+    -fx-background-color: linear-gradient(to right, white, darkgreen);
+}
+Circle{
+    -fx-fill: radial-gradient(center 25% 25%, radius 55%, lightblue, darkblue );
+}
+
+.imagePane{
+    -fx-background-image: url("Images/puttyComputer.jpg");
+    -fx-background-position: center;
+}
+#RepeatImage.imagePane{
+    -fx-background-image: url("Images/puttyComputer.jpg");
+    -fx-background-repeat: no-repeat;
+}
+TextArea{
+    -fx-text-alignment: center;
+    -fx-font-size: 50;
+    -fx-font-family: Arial;
+}
+#txtArea1{
+    -fx-text-fill :
+            linear-gradient(to right, lightcyan, darkolivegreen);
+    -fx-font-weight: 900;
+}
+#txtArea2{
+    -fx-text-fill: skyblue;
+    -fx-font-weight: 100;
+}
+
+#btnShadow{
+    -fx-effect: dropshadow(
+            gaussian, /*blur-type*/
+            black, /*color*/
+            50, /*radius*/
+            0.5, /*spread*/
+            3, /*offsetX*/
+            3);/*offsetY*/
+
+}
+
+#btnShadow:pressed{
+    -fx-effect: innershadow(gaussian,black,10,0.5,3,3);
+}
+
+
+
