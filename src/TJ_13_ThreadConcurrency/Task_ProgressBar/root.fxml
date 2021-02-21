@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="150.0" prefWidth="200.0" stylesheets="@app.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="TJ_13_ThreadConcurrency.Task_ProgressBar.RootController">
+
+   <Button fx:id="btnStart" layoutX="46.0" layoutY="98.0" mnemonicParsing="false" stylesheets="@app.css" text="Start" />
+   <Button fx:id="btnStop" layoutX="114.0" layoutY="98.0" mnemonicParsing="false" text="Stop" />
+   <ProgressBar fx:id="progressbar" layoutX="22.0" layoutY="46.0" prefHeight="18.0" prefWidth="157.0" progress="0.0" />
+   <Label fx:id="lblProgress" layoutX="22.0" layoutY="68.0" text="0" />
+   <Label fx:id="lblResult" layoutX="114.0" layoutY="68.0" text="작업결과" />
+</AnchorPane>

@@ -1,0 +1,10 @@
+Label{
+    -fx-background-color: White;
+    -fx-background-radius: 30;
+    -fx-font-weight: bold;
+    -fx-font-family: Calibri;
+}
+
+Button:pressed{
+    -fx-effect: innershadow(three-pass-box, black,8,0,2,2);
+}
