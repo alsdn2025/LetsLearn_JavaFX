@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="220.0" prefWidth="370.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="TJ_ChattingProgram.Client.RootController">
+    <top>
+        <TextArea fx:id="textArea" editable="false" prefHeight="200" prefWidth="370" />
+    </top>
+
+    <bottom>
+        <HBox spacing="5">
+            <TextField fx:id="textField" prefWidth="230">
+            </TextField>
+            <Button fx:id="btnSendMessage" text="Send" />
+            <Button fx:id="btnConnect" text="Connect" />
+         <BorderPane.margin>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+         </BorderPane.margin>
+        </HBox>
+    </bottom>
+</BorderPane>
