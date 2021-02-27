@@ -14,6 +14,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.ResourceBundle;
 
+/**
+* @class : RootController.java
+* @modifyed : 2021-02-27 오후 7:39
+* @usage : 클라이언트 컨트롤러.
+**/
 public class RootController implements Initializable {
     @FXML private TextField textField;
     @FXML private TextArea textArea;
@@ -31,6 +36,7 @@ public class RootController implements Initializable {
                 Platform.runLater(()-> {
                     printTextArea("서버에 접속했습니다. " + new Date());
                     printTextArea("Server IP : " + socket.getRemoteSocketAddress());
+                    printTextArea("--------------------------------------------------------------------");
                     btnConnect.setText("Disconnect");
                 });
 
@@ -79,12 +85,10 @@ public class RootController implements Initializable {
                     } catch (Exception e) {
                         // 클라이언트쪽에서 Disconnect 했을 경우
                         if (socket.isClosed()) {
-                            Platform.runLater(() -> printTextArea(
-                                    Thread.currentThread().getName() + " : 연결이 끊어졌습니다.")
-                            );
+                            Platform.runLater(() -> printTextArea("[연결이 끊어졌습니다]"));
                             break;
                         } else { // 그 밖에 예외가 발생한 경우( 에러 )
-                            System.out.println("예외 발생");
+                            System.out.println("[에러 발생]");
                             System.out.println(e.getMessage());
                             exitServer();
                             break;
@@ -108,6 +112,7 @@ public class RootController implements Initializable {
                     printTextArea("[연결 종료..]");
                     btnSendMessage.setDisable(true);
                     btnConnect.setText("Connect");
+                    printTextArea("Disconnected..");
                 });
                 if (socket != null && !socket.isClosed()) {
                     socket.close();
@@ -132,6 +137,7 @@ public class RootController implements Initializable {
         btnSendMessage.setDisable(true);
         btnConnect.setText("Connect");
         btnConnect.setOnAction(this::handleBtnConnectAction);
+        printTextArea("Disconnected..");
     }
 
     public void handleBtnConnectAction(ActionEvent event){

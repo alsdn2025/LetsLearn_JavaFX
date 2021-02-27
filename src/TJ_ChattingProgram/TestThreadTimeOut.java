@@ -1,5 +1,9 @@
 package TJ_ChattingProgram;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -35,6 +39,19 @@ public class TestThreadTimeOut {
 
         Thread.sleep(10);
         System.out.println("중단점 삽입");
+
+
+        try {
+            ServerSocket serverSocket = new ServerSocket(); // create
+            serverSocket.bind(new InetSocketAddress("localhost",5001)); // bind
+            while (true) {
+                Socket socket = serverSocket.accept(); // listen & accept()
+
+            }
+
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
 
 
     }

@@ -16,6 +16,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
 
+
+/**
+* @class : RootController.java
+* @modifyed : 2021-02-27 오후 7:39
+* @usage : 서버쪽 컨트롤러
+**/
 public class RootController implements Initializable {
     @FXML Button btnStartEnd;
     @FXML TextArea textArea;
@@ -25,64 +31,66 @@ public class RootController implements Initializable {
     ServerSocket serverSocket;
     List<Client> connections = new Vector<>(); // 스레드동시성을 보장하는 Vector
 
+
     class Client{
         private final Socket socket;
         public Client(Socket socket){
             this.socket = socket;
-            this.receive();
+//            this.receive();
         }
 
-        private void receive() {
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        while (true) {
-                            byte[] byteArr = new byte[100];
-                            InputStream is = socket.getInputStream();
-                            int readByteCount = is.read(byteArr);
-
-                            // 만약 정상적으로 소켓이 close 되었다면
-                            if(readByteCount == -1){
-                                    Platform.runLater(() -> {
-                                        displayText("[" + socket.getRemoteSocketAddress() + " 로부터의 연결이 끊어졌습니다]");
-                                        connections.remove(Client.this);
-                                        if(!socket.isClosed())
-                                            try{socket.close();}catch (IOException e){}
-                                    });
-                            }
-
-                            String data = new String(byteArr,0,readByteCount, StandardCharsets.UTF_8);
-
-                            Platform.runLater(()->displayText(
-                                    "[요청 처리 : " + socket.getRemoteSocketAddress()+"] " + Thread.currentThread().getName()
-                            ));
-                            Platform.runLater(()->displayText(
-                                    "[내용 : " + data + "]"
-                            ));
-
-                            String message = "[" + socket.getRemoteSocketAddress() +"] : " + data;
-                            for(Client c : connections){
-                                c.send(message);
-                            }
-                        }
-                    }catch(IOException e){
-                        try {
-                            // 클라이언트가 비정상적으로 종료시, read 메서드에서 예외 발생
-                            // 클라이언트가 정상적으로 종료시에도 readByteCount == -1이므로 예외 발생
-                            connections.remove(Client.this);
-                            String message = "[클라이언트 통신 오류 : " + socket.getRemoteSocketAddress() + "]" + Thread.currentThread().getName();
-                            Platform.runLater(() -> displayText(message));
-                            socket.close();
-                            e.printStackTrace();
-                        } catch (IOException exception) {
-                            exception.printStackTrace();
-                        }
-                    }
-                }
-            };
-            executorService.submit(runnable);
-        }
+//        private void receive() {
+//            Runnable runnable = new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        while (true) {
+//                            byte[] byteArr = new byte[100];
+//                            InputStream is = socket.getInputStream();
+//                            int readByteCount = is.read(byteArr);
+//
+//                            // 만약 정상적으로 소켓이 close 되었다면
+//                            if (readByteCount == -1) {
+//                                Platform.runLater(() -> {
+//                                    displayText("[" + socket.getRemoteSocketAddress() + " 로부터의 연결이 끊어졌습니다]");
+//                                });
+//                                connections.remove(Client.this);
+//                                if (!socket.isClosed()) try { socket.close(); } catch (IOException e) { }
+//                                break;
+//                            }
+//
+//                            String data = new String(byteArr, 0, readByteCount, StandardCharsets.UTF_8);
+//
+//                            Platform.runLater(()->displayText("[요청 처리 : " + socket.getRemoteSocketAddress()+"]"));
+//                            Platform.runLater(()->displayText("[내용 : " + data + "]"));
+//
+//                            String message = "[" + socket.getRemoteSocketAddress() +"] : " + data;
+//                            for(Client c : connections){
+//                                c.send(message);
+//                            }
+//                        }
+//                    }catch(IOException e){
+//                        try {
+//                            if(socket.isClosed()){
+//                                // 서버가 닫혀서 예외 발생시
+//                                Platform.runLater(()->displayText("[" + socket.getRemoteSocketAddress() + "과의 연결이 끊어졌습니다.]"));
+//                            }
+//                            else {
+//                                // 비정상적인 예외 발생시
+//                                String message = "[클라이언트 통신 오류 : " + socket.getRemoteSocketAddress() + "]" + Thread.currentThread().getName();
+//                                Platform.runLater(() -> displayText(message));
+//                                socket.close();
+//                                e.printStackTrace();
+//                            }
+//                            connections.remove(Client.this);
+//                        } catch (IOException exception) {
+//                            exception.printStackTrace();
+//                        }
+//                    }
+//                }
+//            };
+//            executorService.submit(runnable);
+//        }
 
         private void send(String data){
             Runnable runnable = ()->{
@@ -106,13 +114,91 @@ public class RootController implements Initializable {
         }
     }
 
+    void receive(){
+        System.out.println("start receive()");
+        Runnable confirmRequestTask = ()->{
+            while(true) {
+                try {
+                    Iterator<Client> iterator = connections.iterator();
+                    // Client 컬렉션을 하나씩 돌면서 작업 요청이 있었는지를 확인한다.
+                    // read 시 일정시간이 지나면 다음 Client 로 넘어간다.
+                    while (iterator.hasNext()) {
+                        Socket socket = null;
+                        Client client = iterator.next(); // 여기서 동시성 예외 발생 가능
+                        socket = client.socket;
+                        socket.setSoTimeout(100);
+                        InputStream is = client.socket.getInputStream();
+                        byte[] byteArr = new byte[100];
+
+                        // 이렇게 만들면, 만약 클라이언트쪽에서 작업요청시
+                        // 이 스레드가 해당 클라이언트를 소켓을 read 하고있지 않았다면
+                        // 그 작업은 무시된다.
+                        int readByteCount = 0;
+                        try {
+                            System.out.println(client.socket.getRemoteSocketAddress() + " : try 진입");
+                            readByteCount = is.read(byteArr);
+                        } catch (SocketTimeoutException e) {
+                            System.out.println("소켓타임아웃");
+                            continue; // 일정시간이 지나면 루프의 처음으로 돌아간다.
+                        } catch (Exception e) {
+                            if (client.socket.isClosed()) {
+                                Platform.runLater(() -> displayText("[" + client.socket.getRemoteSocketAddress() + "과의 연결이 끊어졌습니다.]"));
+                            } else {
+                                String message = "[클라이언트 통신 오류 : " + client.socket.getRemoteSocketAddress() + "]" + Thread.currentThread().getName();
+                                Platform.runLater(() -> displayText(message));
+                                client.socket.close();
+                                e.printStackTrace();
+                            }
+                            connections.remove(client);
+                            continue;
+                        }
+
+                        // 만약 정상적으로 소켓이 close 되어 -1을 리턴했다면
+                        if (readByteCount == -1) {
+                            Platform.runLater(() -> {
+                                displayText("[" + client.socket.getRemoteSocketAddress() + " 로부터의 연결이 끊어졌습니다]");
+                            });
+                            if (!client.socket.isClosed()) try {
+                                client.socket.close();
+                            } catch (IOException e) { }
+                            connections.remove(client);
+                            continue; // 루프의 처음으로 돌아간다.
+                        }
+
+                        // 실제로 받은 작업( 받은 문자열을 개체로 만들고 출력 + 각 클라이언트들에게 send )
+                        // 은 스레드풀에 submit 하여 다른 스레드에게 맡긴다.
+                        final int readByteCntImmutable = readByteCount;
+                        Runnable requestedTask = () -> {
+                            System.out.println("request된 작업 실행");
+                            String data = new String(byteArr, 0, readByteCntImmutable, StandardCharsets.UTF_8);
+                            Platform.runLater(() -> displayText("[요청 처리 : " + client.socket.getRemoteSocketAddress() + "]"));
+                            Platform.runLater(() -> displayText("[내용 : " + data + "]"));
+
+                            String message = "[" + client.socket.getRemoteSocketAddress() + "] : " + data;
+                            for (Client c : connections) {
+                                c.send(message);
+                            }
+                        };
+                        executorService.submit(requestedTask);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch(ConcurrentModificationException e){
+                    // iterator 가 내부 반복중( client = iterator.next )에 connections 에 조작이 있을 경우
+                    // 다시 루프의 처음으로 돌아간다.
+                    System.out.println("ConcurrentModificationException Occur");
+                }
+            }
+        };
+        executorService.submit(confirmRequestTask);
+    }
+
     void startServer(){
 //        this.executorService = Executors.newFixedThreadPool(
 //                Runtime.getRuntime().availableProcessors()
 //        );
 
         // 스레드풀의 모든 스레드들을 데몬스레드로 만들어, application 이 종료되면 스레드풀도 종료
-
         executorService = Executors.newFixedThreadPool(
                 Runtime.getRuntime().availableProcessors(),
                 new ThreadFactory() {
@@ -139,6 +225,7 @@ public class RootController implements Initializable {
                 try {
                     displayText("[서버가 열렸습니다] " + new Date());
                     displayText("[서버 IP : " + InetAddress.getLocalHost().getHostAddress() + ":" + serverSocket.getLocalPort() + "]");
+                    displayText("--------------------------------------------------------------------");
                     btnStartEnd.setText("Close Server");
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
@@ -148,8 +235,7 @@ public class RootController implements Initializable {
             while(true){
                 try {
                     Socket socket = serverSocket.accept();
-                    String message = Thread.currentThread().getName() +
-                            " : [연결 수락 : " + socket.getRemoteSocketAddress() +"] " + new Date();
+                    String message = " : [연결 수락 : " + socket.getRemoteSocketAddress() +"] " + new Date();
                     Platform.runLater(()->{
                         displayText(message);
                     });
@@ -169,8 +255,8 @@ public class RootController implements Initializable {
             }
         };
         executorService.submit(runnable);
+        receive();
     }
-
 
     void displayText(String text){
         this.textArea.appendText(text);
@@ -179,17 +265,20 @@ public class RootController implements Initializable {
 
     void closeServer(){
         try {
-//            Iterator<Client> iterator = connections.iterator();
-//            while (iterator.hasNext()) {
-//                Client client = iterator.next();
-//                client.socket.close();
-//                iterator.remove();
-//            }
-
-            for(var c : connections){
-                c.socket.close();
-                connections.remove(c);
+            Iterator<Client> iterator = connections.iterator();
+            while (iterator.hasNext()) {
+                Client client = iterator.next();
+                client.socket.close();
+                iterator.remove();
+                System.out.println(Thread.currentThread().getName() + " : CloseServer ");
             }
+
+            // 아래 처럼 향상된 for 루프 사용시 동시성예외가 발생한다.
+//            for(var c : connections){
+//                c.socket.close();
+//                connections.remove(c);
+//                System.out.println(Thread.currentThread().getName() + " : CloseServer ");
+//            }
 
             if(serverSocket!=null && !serverSocket.isClosed()){
                 serverSocket.close();
