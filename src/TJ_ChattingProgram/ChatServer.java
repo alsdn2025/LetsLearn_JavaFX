@@ -19,7 +19,7 @@ public class ChatServer extends Application {
     public void start(Stage primaryStage) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("root.fxml"));
         Scene scene = new Scene(root);
-//        scene.getStylesheets().add(getClass().getResource("app.css").toString());
+        scene.getStylesheets().add(getClass().getResource("ServerStyle.css").toString());
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("AppMain");

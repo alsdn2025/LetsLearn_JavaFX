@@ -7,7 +7,7 @@
 
 <BorderPane prefHeight="220.0" prefWidth="370.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="TJ_ChattingProgram.Client.RootController">
     <top>
-        <TextFlow fx:id="textFlow" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+        <TextFlow fx:id="textFlow" prefHeight="199.0" prefWidth="370.0" BorderPane.alignment="CENTER" />
     </top>
 
     <bottom>

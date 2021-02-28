@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
@@ -39,61 +40,7 @@ public class RootController implements Initializable {
         private final Socket socket;
         public Client(Socket socket){
             this.socket = socket;
-//            this.receive();
         }
-
-//        private void receive() {
-//            Runnable runnable = new Runnable() {
-//                @Override
-//                public void run() {
-//                    try {
-//                        while (true) {
-//                            byte[] byteArr = new byte[100];
-//                            InputStream is = socket.getInputStream();
-//                            int readByteCount = is.read(byteArr);
-//
-//                            // 만약 정상적으로 소켓이 close 되었다면
-//                            if (readByteCount == -1) {
-//                                Platform.runLater(() -> {
-//                                    displayText("[" + socket.getRemoteSocketAddress() + " 로부터의 연결이 끊어졌습니다]");
-//                                });
-//                                connections.remove(Client.this);
-//                                if (!socket.isClosed()) try { socket.close(); } catch (IOException e) { }
-//                                break;
-//                            }
-//
-//                            String data = new String(byteArr, 0, readByteCount, StandardCharsets.UTF_8);
-//
-//                            Platform.runLater(()->displayText("[요청 처리 : " + socket.getRemoteSocketAddress()+"]"));
-//                            Platform.runLater(()->displayText("[내용 : " + data + "]"));
-//
-//                            String message = "[" + socket.getRemoteSocketAddress() +"] : " + data;
-//                            for(Client c : connections){
-//                                c.send(message);
-//                            }
-//                        }
-//                    }catch(IOException e){
-//                        try {
-//                            if(socket.isClosed()){
-//                                // 서버가 닫혀서 예외 발생시
-//                                Platform.runLater(()->displayText("[" + socket.getRemoteSocketAddress() + "과의 연결이 끊어졌습니다.]"));
-//                            }
-//                            else {
-//                                // 비정상적인 예외 발생시
-//                                String message = "[클라이언트 통신 오류 : " + socket.getRemoteSocketAddress() + "]" + Thread.currentThread().getName();
-//                                Platform.runLater(() -> displayText(message));
-//                                socket.close();
-//                                e.printStackTrace();
-//                            }
-//                            connections.remove(Client.this);
-//                        } catch (IOException exception) {
-//                            exception.printStackTrace();
-//                        }
-//                    }
-//                }
-//            };
-//            executorService.submit(runnable);
-//        }
 
         private void send(String data){
             Runnable runnable = ()->{
@@ -110,7 +57,7 @@ public class RootController implements Initializable {
                         Platform.runLater(() -> displayText(message));
                         connections.remove(Client.this);
                         socket.close();
-                    } catch (IOException exception) { }
+                    } catch (IOException exception) {e.printStackTrace();}
                 }
             };
             executorService.submit(runnable);
@@ -263,6 +210,13 @@ public class RootController implements Initializable {
         this.textFlow.getChildren().add(text);
     }
 
+    void displayTextWithColor(String message, Color color){
+        Text text = new Text(message + System.lineSeparator());
+        String textColor = color.toString().substring(2);
+        text.setStyle("-fx-fill: #" + textColor + ";");
+        this.textFlow.getChildren().add(text);
+    }
+
     void clearTextBoard(){
         this.textFlow.getChildren().clear();
     }
@@ -324,23 +278,33 @@ public class RootController implements Initializable {
         }
     }
 
+
+    /**
+    * @class : RootController.java
+    * @modifyed : 2021-03-01 오전 1:31
+    * @usage : 텍스트 색상을 정해서 send하고 receive하는걸 테스트중.
+    **/
     void handleBtnSendAction(ActionEvent event){
         Runnable runnable = ()->{
           try{
               if(connections.size() != 0) {
-                  String message = "[서버] : " + textField.getText();
+                  String colorMessage = "##msg-color:" + Color.DODGERBLUE +"##";
+                  System.out.println("colorMessage : " + colorMessage);
+                  String message = "[서버] "+ textField.getText();
                   Platform.runLater(() -> {
-                      displayText(message);
+                      displayTextWithColor(message,Color.BLUE);
                       displayText("[메세지를 보냈습니다]");
                       textField.setText("");
                   });
                   for (Client c : connections) {
-                      c.send(message);
+                      c.send(colorMessage + message);
+//                      c.send(message);
                   }
               }
               else{
                   Platform.runLater(()->{
-                      displayText("[서버에 접속한 클라이언트가 없습니다.]");
+                      displayTextWithColor(
+                              "[서버에 접속한 클라이언트가 없습니다.]", Color.LIGHTCORAL);
                       textField.setText("");
                   });
               }

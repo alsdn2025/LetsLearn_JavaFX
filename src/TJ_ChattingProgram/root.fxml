@@ -13,7 +13,7 @@
     </top>
     <bottom>
         <VBox>
-            <TextField fx:id="textField">
+            <TextField fx:id="textField" >
 
             </TextField>
             <HBox alignment="BOTTOM_LEFT" spacing="50">

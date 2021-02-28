@@ -1,0 +1,8 @@
+TextField{
+    -fx-background-color: lightblue;
+}
+
+TextField:focused{
+    -fx-background-color: skyblue;
+    -fx-text-fill: blue;
+}

@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
@@ -129,9 +130,24 @@ public class RootController implements Initializable {
                             break;
                         }
 
-                        Platform.runLater(() -> {
-                            printTextBoard(new String(data));
-                        });
+                        // #msg:color:0x0000ffff 형식으로 보내져올 것.
+                        // index보다는 split을 활용하는게  시각적으로 더 좋겠다.
+                        String strData = new String(data);
+                        if(strData.startsWith("##msg-color:")){
+                            String textColor = extractColorPart(strData);
+                            String message = extractMessagePart(strData);
+
+                            System.out.println("color part : " + textColor);
+                            System.out.println("message part : " + message);
+
+                            Platform.runLater(()->{
+                                printColorTextBoard(message,textColor);
+                            });
+                        } else {
+                            Platform.runLater(() -> {
+                                printTextBoard(strData);
+                            });
+                        }
                     }
                 } catch (Exception e) {
                     // 클라이언트쪽에서 Disconnect 했을 경우
@@ -151,7 +167,6 @@ public class RootController implements Initializable {
         thread.start();
         thread.setName("MessageReceiving Thread");
     }
-
 
     // UI 관련작업 외에는 작업스레드에게 일을 시키자.
     public void exitServer() {
@@ -179,7 +194,21 @@ public class RootController implements Initializable {
     public void printTextBoard(String message){
         Text text = new Text(message + System.lineSeparator());
         this.textFlow.getChildren().add(text);
+    }
 
+    public void printColorTextBoard(String message, Color color){
+        Text text = new Text(message + System.lineSeparator());
+        String textColor = color.toString().substring(2);
+        text.setStyle("-fx-fill: #" + textColor + ";-fx-font-weight: bold;");
+        this.textFlow.getChildren().add(text);
+    }
+
+    public void printColorTextBoard(String message, String color){
+        Text text = new Text(message + System.lineSeparator());
+        String textColor = color.substring(2);
+        text.setStyle("-fx-fill: #" + textColor + ";");
+        System.out.println("style:" + "-fx-fill: #" + textColor + ";");
+        this.textFlow.getChildren().add(text);
     }
 
     public void clearTextBoard(){
@@ -229,5 +258,26 @@ public class RootController implements Initializable {
         thread.setDaemon(true);
         thread.setName("MessageSending Thread");
         thread.start();
+    }
+
+
+    /**
+    * @class : RootController.java
+    * @modifyed : 2021-03-01 오전 2:19
+    * @usage : Methods to extract colorPart/MessagePart of Receiving Data.
+    **/
+    public String extractMessagePart(String str){
+        String[] strs = str.split("##");
+        StringBuilder sb = new StringBuilder();
+        if(strs.length > 2){
+            for(int i = 2; i < strs.length; i++){
+                sb.append(strs[i]);
+            }
+        }
+        return sb.toString();
+    }
+    public String extractColorPart(String str){
+        String[] strs = str.split("##");
+        return strs[1].split(":")[1];
     }
 }
