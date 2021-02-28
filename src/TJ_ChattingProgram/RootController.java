@@ -7,6 +7,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,8 +26,9 @@ import java.util.concurrent.*;
 **/
 public class RootController implements Initializable {
     @FXML Button btnStartEnd;
-    @FXML TextArea textArea;
+    @FXML TextFlow textFlow;
     @FXML TextField textField;
+    @FXML Button btnSendMessage;
 
     ExecutorService executorService;
     ServerSocket serverSocket;
@@ -115,7 +118,6 @@ public class RootController implements Initializable {
     }
 
     void receive(){
-        System.out.println("start receive()");
         Runnable confirmRequestTask = ()->{
             while(true) {
                 try {
@@ -135,11 +137,9 @@ public class RootController implements Initializable {
                         // 그 작업은 무시된다.
                         int readByteCount = 0;
                         try {
-                            System.out.println(client.socket.getRemoteSocketAddress() + " : try 진입");
                             readByteCount = is.read(byteArr);
                         } catch (SocketTimeoutException e) {
-                            System.out.println("소켓타임아웃");
-                            continue; // 일정시간이 지나면 루프의 처음으로 돌아간다.
+                            continue; // 일정시간이 지나면 루프의 처음으로 돌아가 다음 client 의 요청이 있었는지 확인한다.
                         } catch (Exception e) {
                             if (client.socket.isClosed()) {
                                 Platform.runLater(() -> displayText("[" + client.socket.getRemoteSocketAddress() + "과의 연결이 끊어졌습니다.]"));
@@ -169,7 +169,6 @@ public class RootController implements Initializable {
                         // 은 스레드풀에 submit 하여 다른 스레드에게 맡긴다.
                         final int readByteCntImmutable = readByteCount;
                         Runnable requestedTask = () -> {
-                            System.out.println("request된 작업 실행");
                             String data = new String(byteArr, 0, readByteCntImmutable, StandardCharsets.UTF_8);
                             Platform.runLater(() -> displayText("[요청 처리 : " + client.socket.getRemoteSocketAddress() + "]"));
                             Platform.runLater(() -> displayText("[내용 : " + data + "]"));
@@ -227,6 +226,7 @@ public class RootController implements Initializable {
                     displayText("[서버 IP : " + InetAddress.getLocalHost().getHostAddress() + ":" + serverSocket.getLocalPort() + "]");
                     displayText("--------------------------------------------------------------------");
                     btnStartEnd.setText("Close Server");
+                    btnSendMessage.setDisable(false);
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
                 }
@@ -258,9 +258,13 @@ public class RootController implements Initializable {
         receive();
     }
 
-    void displayText(String text){
-        this.textArea.appendText(text);
-        this.textArea.appendText(System.lineSeparator());
+    void displayText(String message){
+        Text text = new Text(message + System.lineSeparator());
+        this.textFlow.getChildren().add(text);
+    }
+
+    void clearTextBoard(){
+        this.textFlow.getChildren().clear();
     }
 
     void closeServer(){
@@ -302,6 +306,8 @@ public class RootController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         btnStartEnd.setText("Start Server");
         btnStartEnd.setOnAction(this::handleBtnStartEndClicked);
+        btnSendMessage.setOnAction(this::handleBtnSendAction);
+        btnSendMessage.setDisable(true);
     }
 
     public void handleBtnStartEndClicked(ActionEvent event){
@@ -318,4 +324,31 @@ public class RootController implements Initializable {
         }
     }
 
+    void handleBtnSendAction(ActionEvent event){
+        Runnable runnable = ()->{
+          try{
+              if(connections.size() != 0) {
+                  String message = "[서버] : " + textField.getText();
+                  Platform.runLater(() -> {
+                      displayText(message);
+                      displayText("[메세지를 보냈습니다]");
+                      textField.setText("");
+                  });
+                  for (Client c : connections) {
+                      c.send(message);
+                  }
+              }
+              else{
+                  Platform.runLater(()->{
+                      displayText("[서버에 접속한 클라이언트가 없습니다.]");
+                      textField.setText("");
+                  });
+              }
+          }catch (Exception e){
+              e.printStackTrace();
+          }
+        };
+        executorService.submit(runnable);
+
+    }
 }

@@ -7,6 +7,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 import java.io.*;
 import java.net.*;
@@ -21,7 +23,7 @@ import java.util.ResourceBundle;
 **/
 public class RootController implements Initializable {
     @FXML private TextField textField;
-    @FXML private TextArea textArea;
+    @FXML private TextFlow textFlow;
     @FXML private Button btnSendMessage;
     @FXML private Button btnConnect;
 
@@ -34,9 +36,10 @@ public class RootController implements Initializable {
                 socket = new Socket();
                 socket.connect(new InetSocketAddress("192.168.10.104",5001));
                 Platform.runLater(()-> {
-                    printTextArea("서버에 접속했습니다. " + new Date());
-                    printTextArea("Server IP : " + socket.getRemoteSocketAddress());
-                    printTextArea("--------------------------------------------------------------------");
+                    clearTextBoard();
+                    printTextBoard("서버에 접속했습니다. " + new Date());
+                    printTextBoard("Server IP : " + socket.getRemoteSocketAddress());
+                    printTextBoard("--------------------------------------------------------------------");
                     btnConnect.setText("Disconnect");
                 });
 
@@ -44,7 +47,7 @@ public class RootController implements Initializable {
                 receive();
             } catch (IOException exception) {
                 exception.printStackTrace();
-                Platform.runLater(()->printTextArea(Thread.currentThread().getName() + " : [서버에 접속할 수 없습니다.]"));
+                Platform.runLater(()-> printTextBoard(Thread.currentThread().getName() + " : [서버에 접속할 수 없습니다.]"));
                 if(!socket.isClosed()){exitServer();}
             }
         });
@@ -58,7 +61,7 @@ public class RootController implements Initializable {
     * @modifyed : 2021-02-26 오전 1:56
     * @usage : 루프를 돌며 서버로부터 오는 데이터를 계속 받는다.
     **/
-    public void receive() {
+/*    public void receive() {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -102,23 +105,69 @@ public class RootController implements Initializable {
         thread.setDaemon(true);
         thread.start();
         thread.setName("MessageReceiving Thread");
+    }*/
+
+
+    public void receive() {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while (true) {
+                        InputStream is = socket.getInputStream();
+                        InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+                        char[] data = new char[100];
+
+                        // 소켓이 서버에 의해 정상적으로 close 되었을 경우.
+                        if (isr.read(data) == -1) {
+                            Platform.runLater(() -> {
+                                printTextBoard(Thread.currentThread().getName() + " : 서버에 의해 연결이 끊어졌습니다.");
+                                if (socket != null && !socket.isClosed()) {
+                                    exitServer();
+                                }
+                            });
+                            break;
+                        }
+
+                        Platform.runLater(() -> {
+                            printTextBoard(new String(data));
+                        });
+                    }
+                } catch (Exception e) {
+                    // 클라이언트쪽에서 Disconnect 했을 경우
+                    if (socket.isClosed()) {
+                        Platform.runLater(() -> printTextBoard("[연결이 끊어졌습니다]"));
+                    } else { // 그 밖에 예외가 발생한 경우( 에러 )
+                        System.out.println("[에러 발생]");
+                        e.printStackTrace();
+                        exitServer();
+                    }
+                }
+            }
+        };
+
+        Thread thread = new Thread(runnable);
+        thread.setDaemon(true);
+        thread.start();
+        thread.setName("MessageReceiving Thread");
     }
+
 
     // UI 관련작업 외에는 작업스레드에게 일을 시키자.
     public void exitServer() {
         Thread thread = new Thread(()->{
             try {
                 Platform.runLater(() -> {
-                    printTextArea("[연결 종료..]");
+                    printTextBoard("[연결 종료..]");
                     btnSendMessage.setDisable(true);
                     btnConnect.setText("Connect");
-                    printTextArea("Disconnected..");
+                    printTextBoard("Disconnected..");
                 });
                 if (socket != null && !socket.isClosed()) {
                     socket.close();
                 }
             }catch (Exception e){
-
+                e.printStackTrace();
             }
         });
         thread.setDaemon(true);
@@ -126,9 +175,15 @@ public class RootController implements Initializable {
         thread.start();
     }
 
-    public void printTextArea(String text){
-        this.textArea.appendText(text);
-        this.textArea.appendText(System.lineSeparator());
+
+    public void printTextBoard(String message){
+        Text text = new Text(message + System.lineSeparator());
+        this.textFlow.getChildren().add(text);
+
+    }
+
+    public void clearTextBoard(){
+        this.textFlow.getChildren().clear();
     }
 
     @Override
@@ -137,7 +192,7 @@ public class RootController implements Initializable {
         btnSendMessage.setDisable(true);
         btnConnect.setText("Connect");
         btnConnect.setOnAction(this::handleBtnConnectAction);
-        printTextArea("Disconnected..");
+        printTextBoard("Disconnected..");
     }
 
     public void handleBtnConnectAction(ActionEvent event){
@@ -149,7 +204,7 @@ public class RootController implements Initializable {
                 exitServer();
                 break;
             default:
-                printTextArea("Wrong ConnectBtn Name");
+                printTextBoard("Wrong ConnectBtn Name");
                 break;
         }
     }
@@ -167,7 +222,7 @@ public class RootController implements Initializable {
                 osw.flush();
             }catch (Exception e){
                 e.printStackTrace();
-                Platform.runLater(()->printTextArea(Thread.currentThread().getName() + " : [서버 통신 오류]"));
+                Platform.runLater(()-> printTextBoard(Thread.currentThread().getName() + " : [서버 통신 오류]"));
                 if(!socket.isClosed()) { exitServer(); }
             }
         });

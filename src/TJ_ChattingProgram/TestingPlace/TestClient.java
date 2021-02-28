@@ -1,4 +1,4 @@
-package TJ_ChattingProgram;
+package TJ_ChattingProgram.TestingPlace;
 
 import java.io.IOException;
 import java.io.OutputStream;
