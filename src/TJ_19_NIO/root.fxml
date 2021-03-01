@@ -6,21 +6,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="TJ_ChattingProgram.RootController">
-    <bottom>
-        <VBox>
-            <TextField fx:id="textField">
+<BorderPane prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="TJ_19_NIO.RootController">
 
-            </TextField>
-            <HBox alignment="BOTTOM_LEFT" spacing="50">
-                <Button fx:id="btnStartEnd" alignment="CENTER" />
-                <Button fx:id="btnSendMessage" alignment="CENTER" text="Send" />
-            </HBox>
-        </VBox>
-    </bottom>
-   <top>
-      <ToolBar prefHeight="3.0" prefWidth="500.0" BorderPane.alignment="CENTER" />
-   </top>
    <center>
        <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
            <padding>

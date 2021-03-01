@@ -28,6 +28,7 @@ import java.util.concurrent.*;
 public class RootController implements Initializable {
     @FXML Button btnStartEnd;
     @FXML TextFlow textFlow;
+    @FXML TextFlow tfUserBoard;
     @FXML TextField textField;
     @FXML Button btnSendMessage;
 
@@ -185,6 +186,7 @@ public class RootController implements Initializable {
                     String message = " : [연결 수락 : " + socket.getRemoteSocketAddress() +"] " + new Date();
                     Platform.runLater(()->{
                         displayText(message);
+                        appendUser(socket.getRemoteSocketAddress().toString());
                     });
 
                     Client client = new Client(socket);
@@ -219,6 +221,15 @@ public class RootController implements Initializable {
 
     void clearTextBoard(){
         this.textFlow.getChildren().clear();
+    }
+
+    void appendUser(String id){
+        Text userID = new Text(id + System.lineSeparator());
+        this.tfUserBoard.getChildren().add(userID);
+    }
+
+    void clearUserBoard(){
+        this.tfUserBoard.getChildren().clear();
     }
 
     void closeServer(){
